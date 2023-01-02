@@ -251,6 +251,7 @@ namespace Breakout
                     }
 
                     // Calculate the bounding box for the brick, taking the gap into account
+                    // TODO:Ask ChatGPT to fix that removing '+ GapHeight' addition.
                     // TODO: var brickRect = new Rect(Canvas.GetLeft(bricks[i, j]), Canvas.GetTop(bricks[i, j]) + GapHeight, bricks[i, j].Width, bricks[i, j].Height);
                     var brickRect = new Rect(Canvas.GetLeft(bricks[i, j]), Canvas.GetTop(bricks[i, j]), bricks[i, j].Width, bricks[i, j].Height);
 
@@ -263,6 +264,9 @@ namespace Breakout
 
                         // Update the velocity of the ball
                         ball.VelocityY = -ball.VelocityY;
+
+                        // TODO: Ask ChatGPT to fix that by terminating checks here and calling 'return;' when collision happened.
+                        return;
                     }
                 }
             }
