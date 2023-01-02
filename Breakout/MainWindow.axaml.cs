@@ -318,6 +318,7 @@ namespace Breakout
             // Set the ball's velocity
             VelocityX = 200;
             VelocityY = -200;
+            // TODO: Askk ChatGPT for better VelocityY so it does not sometimes hit a brick when game starts.
         }
 
         public void Update()
