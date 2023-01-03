@@ -77,6 +77,7 @@ public class GameBoard : Canvas
             PlacementMode = PlacementMode.AnchorAndGravity,
             PlacementGravity = PopupGravity.None,
             PlacementTarget = this,
+            IsLightDismissEnabled = true,
             HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
             VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
             IsOpen = false,
@@ -88,6 +89,18 @@ public class GameBoard : Canvas
             }
         };
         this.Children.Add(popup);
+        
+        // Handle the Closed event of the popup
+        popup.Closed += (sender, args) =>
+        {
+            // Reset the game state
+            this.Reset();
+        };
+    }
+
+    private void Reset()
+    {
+        // TODO:
     }
 
     private void AddBricks()
