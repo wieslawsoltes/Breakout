@@ -2,6 +2,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Primitives.PopupPositioning;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
@@ -73,6 +74,9 @@ public class GameBoard : Canvas
         // Initialize the popup control
         popup = new Popup
         {
+            PlacementMode = PlacementMode.AnchorAndGravity,
+            PlacementGravity = PopupGravity.None,
+            PlacementTarget = this,
             HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
             VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
             IsOpen = false,
