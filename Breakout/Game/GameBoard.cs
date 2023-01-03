@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Primitives.PopupPositioning;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
@@ -19,7 +20,7 @@ public class GameBoard : Canvas
     private Brick[,] bricks;
 
     // The timer that controls the game loop
-    private DispatcherTimer mainTimer;
+    private DispatcherTimer gameTimer;
 
     // The popup control
     private Popup popup;
@@ -27,14 +28,23 @@ public class GameBoard : Canvas
     // The speed at which the paddle moves (in pixels per second)
     private const double PaddleSpeed = 300;
         
-    private DispatcherTimer timer;
+    private DispatcherTimer keyboardTimer;
     private bool isLeftKeyDown;
     private bool isRightKeyDown;
         
     public int NumRows { get; set; }
     public int NumColumns { get; set; }
     public int GapHeight { get; set; }
-        
+
+    public static readonly StyledProperty<int> ScoreProperty =
+        AvaloniaProperty.Register<GameBoard, int>(nameof(Score));
+
+    public int Score
+    {
+        get => GetValue(ScoreProperty);
+        set => SetValue(ScoreProperty, value);
+    }
+    
     public GameBoard()
     {
         NumRows = 5;
@@ -57,15 +67,15 @@ public class GameBoard : Canvas
         AddBricks();
 
         // Set the timer interval and start the timer
-        mainTimer = new DispatcherTimer();
-        mainTimer.Interval = TimeSpan.FromMilliseconds(16);
-        mainTimer.Tick += OnMainTimerTick;
-        mainTimer.Start();
+        gameTimer = new DispatcherTimer();
+        gameTimer.Interval = TimeSpan.FromMilliseconds(16);
+        gameTimer.Tick += OnGameTimerTick;
+        gameTimer.Start();
   
         // Create a DispatcherTimer to update the position of the paddle continuously
-        timer = new DispatcherTimer();
-        timer.Interval = TimeSpan.FromMilliseconds(16);
-        timer.Tick += OnTimerTick;
+        keyboardTimer = new DispatcherTimer();
+        keyboardTimer.Interval = TimeSpan.FromMilliseconds(16);
+        keyboardTimer.Tick += OnKeyboardTimerTick;
             
         // Register the OnKeyDown and OnKeyUp methods as handlers for the KeyDown and KeyUp events
         this.KeyDown += OnKeyDown;
@@ -96,11 +106,48 @@ public class GameBoard : Canvas
             // Reset the game state
             this.Reset();
         };
+        
+        TextBlock scoreTextBlock = new TextBlock
+        {
+            Text = "Score: 0",
+            FontSize = 20,
+            Foreground = Brushes.White
+        };
+        
+        scoreTextBlock.Bind(TextBlock.TextProperty, new Binding
+        {
+            Path = "Score",
+            Mode = BindingMode.OneWay,
+            Source = this
+        });
+
+        // Set the position of the scoreTextBlock
+        Canvas.SetLeft(scoreTextBlock, 10);
+        Canvas.SetTop(scoreTextBlock, 10);
+
+        // Add the scoreTextBlock to the game board
+        this.Children.Add(scoreTextBlock);
     }
 
     private void Reset()
     {
-        // TODO:
+        // Reset the ball
+        ball.Start();
+
+        // Remove all bricks from the game board
+        foreach (var brick in bricks)
+        {
+            this.Children.Remove(brick);
+        }
+
+        // Add the bricks to the game board
+        AddBricks();
+
+        // Reset the score
+        Score = 0;
+        
+        // Restart the game loop
+        gameTimer.Start();
     }
 
     private void AddBricks()
@@ -124,7 +171,7 @@ public class GameBoard : Canvas
         }
     }
 
-    private void OnTimerTick(object sender, EventArgs e)
+    private void OnKeyboardTimerTick(object sender, EventArgs e)
     {
         // Get the current position of the paddle
         double x = Canvas.GetLeft(paddle);
@@ -149,7 +196,7 @@ public class GameBoard : Canvas
         // Stop the DispatcherTimer if both keys are released
         if (!isLeftKeyDown && !isRightKeyDown)
         {
-            timer.Stop();
+            keyboardTimer.Stop();
         }
     }
 
@@ -166,9 +213,9 @@ public class GameBoard : Canvas
         }
 
         // Start the DispatcherTimer if it is not already running
-        if (!timer.IsEnabled)
+        if (!keyboardTimer.IsEnabled)
         {
-            timer.Start();
+            keyboardTimer.Start();
         }
     }
         
@@ -187,7 +234,7 @@ public class GameBoard : Canvas
         // Stop the DispatcherTimer if both keys are released
         if (!isLeftKeyDown && !isRightKeyDown)
         {
-            timer.Stop();
+            keyboardTimer.Stop();
         }
     }
 
@@ -201,7 +248,7 @@ public class GameBoard : Canvas
     }
 
     // The game loop
-    private void OnMainTimerTick(object sender, EventArgs e)
+    private void OnGameTimerTick(object sender, EventArgs e)
     {
         // Update the ball position
         ball.Update();
@@ -263,6 +310,9 @@ public class GameBoard : Canvas
                     // Update the velocity of the ball
                     ball.VelocityY = -ball.VelocityY;
 
+                    // Increase the score
+                    Score++;
+
                     // Terminate the loop after the first collision is found
                     return;
                 }
@@ -277,7 +327,7 @@ public class GameBoard : Canvas
         if (Canvas.GetTop(ball) > 600)
         {
             // Stop the game loop
-            mainTimer.Stop();
+            gameTimer.Stop();
 
             // Show the popup
             popup.IsOpen = true;
