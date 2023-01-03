@@ -202,6 +202,15 @@ public class GameBoard : Canvas
 
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
+        if (e.Key == Key.Enter)
+        {
+            // Close the popup
+            popup.IsOpen = false;
+
+            // Reset the game
+            Reset();
+        }
+
         // Check if the left or right arrow key is being held down
         if (e.Key == Key.Left)
         {
