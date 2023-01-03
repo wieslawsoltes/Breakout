@@ -60,10 +60,7 @@ public class GameBoard : Canvas
         mainTimer.Interval = TimeSpan.FromMilliseconds(16);
         mainTimer.Tick += OnMainTimerTick;
         mainTimer.Start();
-            
-        // Subscribe to the PointerMoved event
-        // this.PointerMoved += OnPointerMoved;
-            
+  
         // Create a DispatcherTimer to update the position of the paddle continuously
         timer = new DispatcherTimer();
         timer.Interval = TimeSpan.FromMilliseconds(16);
@@ -88,6 +85,7 @@ public class GameBoard : Canvas
         };
         this.Children.Add(popup);
     }
+
     private void AddBricks()
     {
         for (int i = 0; i < NumRows; i++)
@@ -108,6 +106,7 @@ public class GameBoard : Canvas
             }
         }
     }
+
     private void OnTimerTick(object sender, EventArgs e)
     {
         // Get the current position of the paddle
