@@ -1,4 +1,6 @@
-﻿using Avalonia.Controls;
+﻿using System;
+using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Media;
 
@@ -6,25 +8,33 @@ namespace Breakout;
 
 public class Ball : Ellipse
 {
-    // The ball's velocity
+    private static Random random = new Random();
+
     public double VelocityX { get; set; }
     public double VelocityY { get; set; }
 
     public Ball()
     {
-        // Set the ball's appearance
         this.Width = 20;
         this.Height = 20;
         this.Fill = Brushes.White;
+    }
 
+    public void Start()
+    {
         // Set the ball's starting position
-        Canvas.SetLeft(this, 380);
-        Canvas.SetTop(this, 280);
-            
-        // Set the ball's velocity
+        Canvas.SetLeft(this, 400 - Width / 2);
+        Canvas.SetTop(this, 300 - Height / 2);
+        
+        // Set the ball's initial velocity
         VelocityX = 200;
         VelocityY = -200;
-        // TODO: Askk ChatGPT for better VelocityY so it does not sometimes hit a brick when game starts.
+
+        // Choose a random initial horizontal direction
+        if (random.NextDouble() < 0.5)
+        {
+            VelocityX = -VelocityX;
+        }
     }
 
     public void Update()

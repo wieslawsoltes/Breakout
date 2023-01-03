@@ -46,6 +46,8 @@ public class GameBoard : Canvas
 
         // Add the ball and the paddle to the game board
         this.Children.Add(ball);
+        ball.Start();
+
         this.Children.Add(paddle);
 
         // Initialize the bricks array using the NumRows and NumColumns properties
