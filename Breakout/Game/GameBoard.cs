@@ -275,5 +275,4 @@ public class GameBoard : Canvas
         // Move the paddle to the pointer position
         paddle.Move(point.X - 50);
     }
-        
 }
